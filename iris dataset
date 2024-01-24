@@ -1,0 +1,91 @@
+
+install.packages(c("dplyr", "ggplot2"))
+install.packages("tidyr")
+install.packages("corrplot")
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+
+# Load the Iris dataset
+data(iris)
+
+# Display basic information about the dataset
+str(iris)
+
+# Display the first few rows of the dataset
+head(iris)
+
+# Summary statistics of numerical features
+summary(iris)
+
+# Count of each species
+table(iris$Species)
+
+# Visualize the dataset
+# Pair plot for numeric features colored by species
+pairs(iris[, 1:4], col = iris$Species, pch = 16)
+
+# Boxplot for each numeric feature by species
+ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
+  geom_boxplot() +
+  theme_bw() +
+  labs(title = "Boxplot of Sepal Length by Species",
+       x = "Species",
+       y = "Sepal Length") +
+  scale_fill_manual(values = c("#FF0000", "#00FF00", "#0000FF"))
+
+# Violin plot for each numeric feature by species
+iris_long <- iris %>%
+  gather(key = "Feature", value = "Value", -Species)
+
+# Create a violin plot for each numeric feature, colored by species
+iris_long <- iris %>%
+  gather(key = "Feature", value = "Value", -Species)
+
+# Create a violin plot for each numeric feature, colored by species
+ggplot(iris_long, aes(x = Feature, y = Value, fill = factor(Species))) +
+  geom_violin() +
+  theme_bw() +
+  labs(title = "Violin Plot for Iris Dataset",
+       x = "Features",
+       y = "Values",
+       fill = "Species") +
+  scale_fill_manual(values = c("#FF0000", "#00FF00", "#0000FF"))
+# Scatter plot for Sepal.Length and Sepal.Width, colored by species
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_point() +
+  theme_bw()
+
+# Scatter plot for Petal.Length and Petal.Width, colored by species
+ggplot(iris, aes(x = Petal.Length, y = Petal.Width, color = Species)) +
+  geom_point() +
+  theme_bw()
+
+# Histograms for each numeric feature colored by species
+iris %>%
+  gather(key = "Feature", value = "Value", -Species) %>%
+  ggplot(aes(x = Value, fill = Species)) +
+  geom_histogram(binwidth = 0.2, position = "identity", alpha = 0.7) +
+  facet_wrap(~ Feature, scales = "free_y") +
+  theme_bw()
+# Compute correlation matrix
+cor_matrix <- cor(iris[, 1:4])
+cor_matrix
+# Plot a heatmap of the correlation matrix
+library(corrplot)
+corrplot(cor_matrix, method = "color")
+# Install and load the necessary package
+install.packages("ggpairs")
+library(GGally)
+
+# Create pair plots with color gradient
+ggpairs(iris, aes(color = Species))
+# Perform a t-test between two species (e.g., setosa and versicolor) for a specific feature
+t.test(iris$Sepal.Length[iris$Species == "setosa"], iris$Sepal.Length[iris$Species == "versicolor"])
+# Identify potential outliers using boxplots
+boxplot(iris$Sepal.Length, main = "Boxplot of Sepal Length", col = "lightblue")
+# Create a density plot for Sepal Length
+ggplot(iris, aes(x = Sepal.Length, fill = Species)) +
+  geom_density(alpha = 0.5) +
+  theme_bw()
+
