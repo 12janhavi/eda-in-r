@@ -1,0 +1,441 @@
+---
+title: "EDA on mtcars"
+author: "JAYANAGARKAR JANHAVI PRAKASH"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  word_document: default
+---
+
+```{r}
+data(mtcars)
+View(mtcars)
+head(mtcars)
+# Summary statistics
+summary(mtcars)
+# Structure of the dataset
+str(mtcars)
+```
+
+```{r}
+# Pairwise scatterplot matrix
+pairs(mtcars)
+```
+
+```{r}
+# Boxplot of mpg grouped by number of cylinders
+boxplot(mpg ~ cyl, data = mtcars, col = "lightblue", main = "Boxplot of MPG by Number of Cylinders")
+```
+
+```{r}
+# Scatterplot of mpg vs. horsepower
+plot(mtcars$hp, mtcars$mpg, main = "Scatterplot of MPG vs. Horsepower", xlab = "Horsepower", ylab = "MPG")
+# Correlation matrix
+cor(mtcars)
+```
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+# Histogram of mpg
+hist(mtcars$mpg, col = "skyblue", main = "Histogram of MPG", xlab = "MPG")
+```
+
+```{r}
+# Density plot of mpg
+plot(density(mtcars$mpg), main = "Density Plot of MPG", xlab = "MPG")
+```
+
+```{r}
+# Bar plot of cylinders count
+barplot(table(mtcars$cyl), col = "lightgreen", main = "Bar Plot of Cylinders Count", xlab = "Number of Cylinders", ylab = "Count")
+```
+
+```{r}
+# Pie chart of transmission types
+pie(table(mtcars$am), col = c("skyblue", "lightcoral"), main = "Pie Chart of Transmission Types")
+library(ggplot2)
+```
+
+```{r}
+# ggplot2: Scatterplot of mpg vs. horsepower with color by cylinders
+ggplot(mtcars, aes(x = hp, y = mpg, color = factor(cyl))) +
+  geom_point() +
+  labs(title = "Scatterplot of MPG vs. Horsepower (Color by Cylinders)", x = "Horsepower", y = "MPG")
+```
+
+```{r}
+# ggplot2: Boxplot of mpg grouped by number of cylinders
+ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(cyl))) +
+  geom_boxplot() +
+  labs(title = "Boxplot of MPG by Number of Cylinders", x = "Number of Cylinders", y = "MPG")
+```
+
+```{r}
+# ggplot2: Histogram of mpg with density plot
+ggplot(mtcars, aes(x = mpg)) +
+  geom_histogram(binwidth = 2, fill = "skyblue", color = "black", alpha = 0.7) +
+  geom_density(color = "red") +
+  labs(title = "Histogram with Density Plot of MPG", x = "MPG")
+```
+
+```{r}
+# ggplot2: Bar plot of cylinders count
+ggplot(mtcars, aes(x = factor(cyl))) +
+  geom_bar(fill = "lightgreen") +
+  labs(title = "Bar Plot of Cylinders Count", x = "Number of Cylinders", y = "Count")
+
+
+```
+
+```{r}
+# ggplot2: Pie chart of transmission types
+ggplot(mtcars, aes(x = "", fill = factor(am))) +
+  geom_bar(width = 1) +
+  coord_polar(theta = "y") +
+  labs(title = "Pie Chart of Transmission Types")
+```
+
+```{r}
+# ggplot2: Faceted scatterplot matrix
+ggplot(mtcars, aes(x = mpg, y = hp)) +
+  geom_point() +
+  facet_grid(. ~ cyl) +
+  labs(title = "Faceted Scatterplot Matrix of MPG vs. Horsepower by Cylinders", x = "MPG", y = "Horsepower")
+```
+
+```{r}
+# Violin plot of mpg by number of cylinders
+ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(cyl))) +
+  geom_violin() +
+  labs(title = "Violin Plot of MPG by Number of Cylinders", x = "Number of Cylinders", y = "MPG")
+```
+
+```{r}
+# Correlation heatmap
+library(corrplot)
+corr_matrix <- cor(mtcars)
+corr_matrix
+corrplot(corr_matrix, method = "color")
+```
+
+```{r}
+# Scatterplot matrix with ggplot2
+ggplot(mtcars, aes(x = mpg, y = hp)) +
+  geom_point() +
+  facet_grid(. ~ cyl) +
+  labs(title = "Scatterplot Matrix of MPG vs. Horsepower by Cylinders", x = "MPG", y = "Horsepower")
+```
+
+```{r}
+# 3D Scatterplot of mpg, hp, and wt
+library(scatterplot3d)
+scatterplot3d(mtcars$mpg, mtcars$hp, mtcars$wt, color = "blue", main = "3D Scatterplot")
+```
+
+```{r}
+# Parallel coordinates plot
+library(GGally)
+ggpairs(mtcars, columns = c("mpg", "hp", "wt", "cyl"), title = "Parallel Coordinates Plot")
+```
+
+```{r}
+# Interactive scatterplot with plotly
+library(plotly)
+plot_ly(data = mtcars, x = ~hp, y = ~mpg, color = ~cyl, type = "scatter", mode = "markers") %>%
+  layout(title = "Interactive Scatterplot of MPG vs. Horsepower", xaxis = list(title = "Horsepower"), yaxis = list(title = "MPG"))
+```
+
+```{r}
+#MULTIVARIATE ANALYSIS
+# Load necessary libraries
+library(ggplot2)
+library(FactoMineR)
+library(factoextra)
+
+# Load the mtcars dataset
+data(mtcars)
+```
+
+```{r}
+# Select relevant variables for PCA
+mtcars_pca_data <- mtcars[, c("mpg", "hp", "wt", "qsec")]
+mtcars_pca_data
+```
+```{r}
+# Standardize the data for PCA
+mtcars_pca_standardized <- scale(mtcars_pca_data)
+mtcars_pca_standardized
+```
+
+```{r}
+# Perform PCA
+mtcars_pca <- PCA(mtcars_pca_standardized, graph = FALSE)
+mtcars_pca 
+```
+
+```{r}
+# Scree plot to identify the number of principal components
+fviz_screeplot(mtcars_pca, addlabels = TRUE, ylim = c(0, 40))
+```
+
+
+
+```{r}
+# Variables factor map (scatterplot of variables in the space of the first two principal components)
+fviz_pca_var(mtcars_pca, col.var = "contrib", gradient.cols = c("blue", "red"), title = "PCA Variables Factor Map")
+```
+```{r}
+#REGRESSION ANALYSIS
+# Fit a multiple linear regression model
+model <- lm(mpg ~ hp + wt + qsec, data = mtcars)
+model
+```
+
+```{r}
+# Summary of the regression model
+summary(model)
+```
+Conclusion:The model's R-squared value indicates that approximately 83% of the variability in miles per gallon can be explained by the predictors included in the model.
+
+
+```{r}
+# Diagnostic plots for the regression model
+par(mfrow = c(2, 2))
+plot(model)
+```
+
+```{r}
+# Residuals vs. Fitted plot
+plot(model$fitted.values, model$residuals, main = "Residuals vs. Fitted",
+     xlab = "Fitted values", ylab = "Residuals", col = "blue", pch = 20)
+```
+
+```{r}
+# Q-Q plot of residuals
+qqnorm(model$residuals, main = "Normal Q-Q Plot of Residuals")
+qqline(model$residuals)
+```
+
+```{r}
+# Scale-Location plot (Square root of absolute residuals vs. Fitted values)
+sqrt_abs_residuals <- sqrt(abs(model$residuals))
+plot(model$fitted.values, sqrt_abs_residuals, main = "Scale-Location Plot",
+     xlab = "Fitted values", ylab = "Square root of absolute residuals", col = "blue", pch = 20)
+```
+
+```{r}
+# Residuals vs. Leverage plot
+plot(model, which = 4)
+```
+```{R}
+#OUTLIERS DETECTION
+
+variables_of_interest <- c("mpg", "hp", "wt", "qsec")  # Define variables of interest for outlier detection
+
+# Boxplot for outlier detection
+boxplot(mtcars[, variables_of_interest], main = "Boxplot of Variables for Outlier Detection")
+
+# Outlier identification using boxplot
+outliers <- boxplot.stats(mtcars$mpg)$out
+outliers
+```
+```{R}
+#CLUSTER ANALYSIS
+# Define variables for clustering
+variables_for_clustering <- c("mpg", "hp", "wt")
+variables_for_clustering
+```
+
+```{r}
+# Standardize the data
+scaled_data <- scale(mtcars[, variables_for_clustering])
+scaled_data 
+```
+
+```{r}
+# Perform K-means clustering
+set.seed(123)  # For reproducibility
+kmeans_result <- kmeans(scaled_data, centers = 3)
+kmeans_result 
+```
+
+```{r}
+# Add cluster assignments to the dataset
+mtcars$cluster <- as.factor(kmeans_result$cluster)
+mtcars$cluster 
+```
+
+```{r}
+# Visualize clusters
+ggplot(mtcars, aes(x = hp, y = mpg, color = cluster)) +
+  geom_point() +
+  labs(title = "K-means Clustering of Cars (mpg vs. hp)", x = "Horsepower", y = "Miles Per Gallon") +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+`
+
+```{r}
+#MACHINE LEARNING MODEL
+# Load necessary libraries
+library(caret)
+```
+
+```{r}
+# Define features (predictors) and target variable
+X <- mtcars[, c("hp", "wt", "qsec")]  # Features: horsepower, weight, quarter-mile time
+y <- mtcars$mpg  # Target variable: miles per gallon
+```
+
+```{r}
+# Split data into training and testing sets
+set.seed(123)  # For reproducibility
+train_indices <- createDataPartition(y, p = 0.8, list = FALSE)
+X_train <- X[train_indices, ]
+y_train <- y[train_indices]
+X_test <- X[-train_indices, ]
+y_test <- y[-train_indices]
+```
+
+```{r}
+# Train a linear regression model
+lm_model <- lm(y_train ~ ., data = data.frame(X_train))
+lm_model 
+```
+
+```{r}
+# Make predictions on the test set
+predictions <- predict(lm_model, newdata = data.frame(X_test))
+predictions
+```
+conclusion:
+Mazda RX4 Wag: The predicted miles per gallon for the Mazda RX4 Wag is approximately 21.88 mpg. This means that according to the regression model, the Mazda RX4 Wag is estimated to achieve around 21.88 miles per gallon in terms of fuel efficiency.
+
+Duster 360: The predicted miles per gallon for the Duster 360 is approximately 16.11 mpg. This suggests that the Duster 360 is estimated to have a lower fuel efficiency compared to the Mazda RX4 Wag, with around 16.11 miles per gallon.
+
+Toyota Corolla: The predicted miles per gallon for the Toyota Corolla is approximately 27.81 mpg. This indicates that the Toyota Corolla is estimated to be more fuel-efficient compared to both the Mazda RX4 Wag and the Duster 360, achieving around 27.81 miles per gallon.
+
+Ford Pantera L: The predicted miles per gallon for the Ford Pantera L is approximately 16.99 mpg. Similar to the Duster 360, the Ford Pantera L is estimated to have lower fuel efficiency compared to the Mazda RX4 Wag and the Toyota Corolla, with around 16.99 miles per gallon.
+
+```{r}
+# Evaluate model performance
+accuracy <- sqrt(mean((predictions - y_test)^2))
+accuracy
+```
+conclusion:
+An RMSE of 3.26 suggests that the model's predictions have a moderate level of error in estimating the miles per gallon for the cars in the mtcars dataset.
+
+```{r}
+# Install and load necessary libraries
+install.packages("shinydashboard")
+library(shiny)
+library(shinydashboard)
+library(ggplot2)
+library(plotly)
+library(caret)
+library(cluster)
+```
+
+```{r}
+# Load the mtcars dataset
+data(mtcars)
+
+# Define UI components
+ui <- dashboardPage(
+  dashboardHeader(title = "Interactive EDA Dashboard"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Scatterplot", tabName = "scatterplot", icon = icon("chart-scatter")),
+      menuItem("Boxplot", tabName = "boxplot", icon = icon("box")),
+      menuItem("Analysis", tabName = "analysis", icon = icon("bar-chart-o"))
+    )
+  ),
+  dashboardBody(
+    tabItems(
+      tabItem(tabName = "scatterplot",
+              fluidRow(
+                box(title = "Scatterplot Options",
+                    selectInput("x_var", "X-axis variable:", choices = c("hp", "wt", "qsec")),
+                    selectInput("y_var", "Y-axis variable:", choices = c("mpg", "hp", "wt", "qsec")),
+                    actionButton("update_scatterplot", "Update Scatterplot", icon("refresh"))
+                )
+              ),
+              fluidRow(
+                plotlyOutput("scatterplot_output")
+              )
+      ),
+      tabItem(tabName = "boxplot",
+              fluidRow(
+                box(title = "Boxplot Options",
+                    selectInput("box_y_var", "Y-axis variable:", choices = c("mpg", "hp", "wt", "qsec")),
+                    actionButton("update_boxplot", "Update Boxplot", icon("refresh"))
+                )
+              ),
+              fluidRow(
+                plotlyOutput("boxplot_output")
+              )
+      ),
+      tabItem(tabName = "analysis",
+              fluidRow(
+                box(title = "Analysis Options",
+                    radioButtons("analysis_type", "Analysis Type:",
+                                 choices = c("Linear Regression", "K-means Clustering")),
+                    conditionalPanel(
+                      condition = "input.analysis_type == 'K-means Clustering'",
+                      numericInput("num_clusters", "Number of Clusters:", value = 3, min = 1, max = 10)
+                    ),
+                    actionButton("run_analysis", "Run Analysis", icon("play-circle-o"))
+                )
+              ),
+              fluidRow(
+                verbatimTextOutput("analysis_results")
+              )
+      )
+    )
+  )
+)
+
+# Define server logic
+server <- function(input, output, session) {
+  analysis_data <- reactiveVal(NULL)
+  
+  observeEvent(input$update_scatterplot, {
+    output$scatterplot_output <- renderPlotly({
+      gg <- ggplot(mtcars, aes_string(x = input$x_var, y = input$y_var)) +
+        geom_point() +
+        labs(title = paste("Scatterplot of", input$x_var, "vs.", input$y_var))
+      ggplotly(gg)
+    })
+  })
+  
+  observeEvent(input$update_boxplot, {
+    output$boxplot_output <- renderPlotly({
+      gg <- ggplot(mtcars, aes_string(x = 1, y = input$box_y_var)) +
+        geom_boxplot() +
+        labs(title = paste("Boxplot of", input$box_y_var))
+      ggplotly(gg)
+    })
+  })
+  
+  observeEvent(input$run_analysis, {
+    if (input$analysis_type == "Linear Regression") {
+      model <- train(as.formula(paste(input$y_var, "~ .")), data = mtcars, method = "lm")
+      analysis_data(summary(model)$coef)
+    } else if (input$analysis_type == "K-means Clustering") {
+      clusters <- kmeans(mtcars[, c(input$x_var, input$y_var)], centers = input$num_clusters)
+      mtcars$cluster <- as.factor(clusters$cluster)
+      analysis_data(table(mtcars$cluster))
+    }
+  })
+  
+  output$analysis_results <- renderPrint({
+    analysis_data()
+  })
+}
+
+# Run the application
+shinyApp(ui = ui, server = server)
+```
+
+
